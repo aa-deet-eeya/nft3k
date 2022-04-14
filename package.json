@@ -1,0 +1,25 @@
+{
+  "name": "nft3k",
+  "version": "1.0.0",
+  "description": "3k NFTs for Interview Assessment Test",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aa-deet-eeya/nft3k.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aa-deet-eeya/nft3k/issues"
+  },
+  "homepage": "https://github.com/aa-deet-eeya/nft3k#readme",
+  "devDependencies": {
+    "truffle": "^5.5.9"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.5.0"
+  }
+}
