@@ -1,12 +1,10 @@
 {
-  "name": "alvax-wildlife",
+  "name": "nft3k",
   "version": "0.1.0",
-  "private": true,
   "scripts": {
     "build:css": "postcss src/assets/css/postcss.css -o src/assets/css/style.css --no-map",
     "build:js": "react-scripts build",
     "build": "npm-run-all build:css build:js",
-    "deploy": "npm run build && gh-pages -d build",
     "start:js": "react-scripts start",
     "start": "npm-run-all -p watch:css start:js",
     "watch:css": "watch 'npm run build:css' src/assets/css/theme"
