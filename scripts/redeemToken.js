@@ -5,7 +5,7 @@ const VOUCHER_LIST = require('../voucher.json');
 
 let CONTRACT_ADDRESS = "0x608F04E942C35Db8A6573C5B0d42a1Bf5b1a0157"
 
-let tokenId = 2
+let tokenId = 3
 
 const main = async () => {
     const accounts = await ethers.getSigners()
