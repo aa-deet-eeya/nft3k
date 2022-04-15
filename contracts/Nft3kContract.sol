@@ -3,13 +3,14 @@ pragma solidity ^0.8.0;
 pragma abicoder v2; // required to accept structs as function parameters
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
-contract Nft3kContract is ERC721URIStorage, EIP712, AccessControl {
+contract Nft3kContract is ERC721Enumerable, ERC721URIStorage, ERC721Royalty, EIP712, AccessControl {
   bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
   string private constant SIGNING_DOMAIN = "Nft3k-Voucher";
   string private constant SIGNATURE_VERSION = "1";
@@ -21,6 +22,7 @@ contract Nft3kContract is ERC721URIStorage, EIP712, AccessControl {
     ERC721("NFT3k", "N3K") 
     EIP712(SIGNING_DOMAIN, SIGNATURE_VERSION) {
       _setupRole(MINTER_ROLE, minter);
+      _setDefaultRoyalty(minter, 500); // 5% royalty to minter on secondary sales
       WHITELIST_ROOT = _merkleRoot;
     }
 
@@ -104,10 +106,6 @@ contract Nft3kContract is ERC721URIStorage, EIP712, AccessControl {
     return ECDSA.recover(digest, voucher.signature);
   }
 
-  function supportsInterface(bytes4 interfaceId) public view virtual override (AccessControl, ERC721) returns (bool) {
-    return ERC721.supportsInterface(interfaceId) || AccessControl.supportsInterface(interfaceId);
-  }
-
 
   /**
    * ~~~~ WHITELIST CODE ~~~~
@@ -119,9 +117,34 @@ contract Nft3kContract is ERC721URIStorage, EIP712, AccessControl {
   function _whitelistVerify(address _account, bytes32[] memory _proof) internal view returns (bool) {
     return MerkleProof.verify(_proof, WHITELIST_ROOT, _whitelistLeaf(_account));
   }
+
   function setWhitelistRoot(bytes32 _root) external {
     require(hasRole(MINTER_ROLE, msg.sender), "Only authorized user can do this");
     WHITELIST_ROOT = _root;
   }
 
+
+  /**
+   * ~~~~ override functions ~~~~
+   */
+
+  function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override(ERC721, ERC721Enumerable) {
+    super._beforeTokenTransfer(from, to, tokenId);
+  }
+
+  function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage, ERC721Royalty) {
+    super._burn(tokenId);
+  }
+
+  function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+    return super.tokenURI(tokenId);
+  }
+    
+  function _baseURI() internal pure override returns (string memory) {
+    return "";
+  }
+
+  function supportsInterface(bytes4 interfaceId) public view virtual override (AccessControl, ERC721, ERC721Enumerable, ERC721Royalty) returns (bool) {
+    return ERC721.supportsInterface(interfaceId) || AccessControl.supportsInterface(interfaceId);
+  }
 }

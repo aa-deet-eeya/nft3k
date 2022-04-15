@@ -44,7 +44,6 @@ describe("Nft3kContract", function() {
 
     const lazyMinter = new LazyMinter({ contract, signer: minter })
     const voucher = await lazyMinter.createVoucher(1, "ipfs://bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi")
-    
     const merkleProof = getWhitelistHexProofFromAddrs(redeemer.address)
     
     await expect(redeemerContract.redeem(redeemer.address, voucher, merkleProof))
@@ -128,6 +127,8 @@ describe("Nft3kContract", function() {
     const minPrice = ethers.constants.WeiPerEther // charge 1 Eth
     const voucher = await lazyMinter.createVoucher(1, "ipfs://bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi", minPrice)
     const merkleProof = getWhitelistHexProofFromAddrs(redeemer.address)
+    console.log(voucher)
+
 
     await expect(redeemerContract.redeem(redeemer.address, voucher, merkleProof, { value: minPrice }))
       .to.emit(contract, 'Transfer')  // transfer from null address to minter
